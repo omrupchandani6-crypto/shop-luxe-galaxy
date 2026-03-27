@@ -10,7 +10,7 @@ const ProductsPage = () => {
   const [searchParams] = useSearchParams();
   const initialCategory = searchParams.get("category") || "";
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 120000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 200000]);
   const [minRating, setMinRating] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -25,7 +25,7 @@ const ProductsPage = () => {
 
   const clearFilters = () => {
     setSelectedCategory("");
-    setPriceRange([0, 120000]);
+    setPriceRange([0, 200000]);
     setMinRating(0);
   };
 
@@ -60,7 +60,7 @@ const ProductsPage = () => {
         <input
           type="range"
           min={0}
-          max={120000}
+          max={200000}
           step={1000}
           value={priceRange[1]}
           onChange={(e) => setPriceRange([0, Number(e.target.value)])}
