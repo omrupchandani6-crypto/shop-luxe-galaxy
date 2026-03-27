@@ -5,7 +5,7 @@ import { formatPrice } from "@/components/ProductCard";
 import Layout from "@/components/layout/Layout";
 import { toast } from "sonner";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowRight, CreditCard, Banknote } from "lucide-react";
+import { ArrowRight, Banknote, Lock } from "lucide-react";
 
 const CheckoutPage = () => {
   const { items, totalPrice, clearCart } = useCartStore();
