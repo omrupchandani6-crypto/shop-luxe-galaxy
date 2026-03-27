@@ -6,7 +6,12 @@ import ProductCard from "@/components/ProductCard";
 import Layout from "@/components/layout/Layout";
 
 const HomePage = () => {
-  const featured = products.slice(0, 4);
+  const featured = [
+    products.find(p => p.id === "s1")!,  // iPhone 15 Pro Max
+    products.find(p => p.id === "s2")!,  // Samsung S24 Ultra
+    products.find(p => p.id === "fw1")!, // Nike Air Max
+    products.find(p => p.id === "w1")!,  // Zara Dress
+  ];
 
   return (
     <Layout>
