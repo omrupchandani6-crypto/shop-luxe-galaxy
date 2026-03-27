@@ -10,7 +10,7 @@ import { ArrowRight, Banknote, Lock } from "lucide-react";
 const CheckoutPage = () => {
   const { items, totalPrice, clearCart } = useCartStore();
   const navigate = useNavigate();
-  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "cod">("razorpay");
+  const [paymentMethod] = useState<"cod">("cod");
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
   const [form, setForm] = useState({
