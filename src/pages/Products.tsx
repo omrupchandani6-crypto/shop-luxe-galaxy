@@ -25,7 +25,7 @@ const ProductsPage = () => {
 
   const clearFilters = () => {
     setSelectedCategory("");
-    setPriceRange([0, 120000]);
+    setPriceRange([0, 200000]);
     setMinRating(0);
   };
 
