@@ -10,7 +10,7 @@ const ProductsPage = () => {
   const [searchParams] = useSearchParams();
   const initialCategory = searchParams.get("category") || "";
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 120000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 200000]);
   const [minRating, setMinRating] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
 
