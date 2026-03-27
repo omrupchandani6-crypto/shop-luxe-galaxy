@@ -1,21 +1,29 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Search, User, Menu, X } from "lucide-react";
+import { ShoppingBag, Search, User, Menu, X, LogOut, Shield } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
+import { useAuth } from "@/context/AuthContext";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
   const totalItems = useCartStore((s) => s.totalItems());
+  const { user, isAdmin, signOut } = useAuth();
 
   const links = [
     { to: "/", label: "Home" },
     { to: "/products", label: "Shop" },
     { to: "/orders", label: "Orders" },
   ];
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 backdrop-blur-xl bg-background/80">
@@ -37,6 +45,16 @@ const Navbar = () => {
               {l.label}
             </Link>
           ))}
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-1 ${
+                location.pathname === "/admin" ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              <Shield className="w-3.5 h-3.5" /> Admin
+            </Link>
+          )}
         </div>
 
         {/* Icons */}
@@ -59,9 +77,19 @@ const Navbar = () => {
               </motion.span>
             )}
           </Link>
-          <Link to="/login" className="p-2 rounded-full hover:bg-secondary transition-colors">
-            <User className="w-5 h-5" />
-          </Link>
+          {user ? (
+            <button
+              onClick={handleSignOut}
+              className="p-2 rounded-full hover:bg-secondary transition-colors"
+              title="Sign Out"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
+          ) : (
+            <Link to="/login" className="p-2 rounded-full hover:bg-secondary transition-colors">
+              <User className="w-5 h-5" />
+            </Link>
+          )}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="p-2 rounded-full hover:bg-secondary transition-colors md:hidden"
@@ -116,6 +144,15 @@ const Navbar = () => {
                   {l.label}
                 </Link>
               ))}
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  onClick={() => setMobileOpen(false)}
+                  className="text-sm font-medium py-2 text-primary flex items-center gap-1"
+                >
+                  <Shield className="w-3.5 h-3.5" /> Admin Panel
+                </Link>
+              )}
             </div>
           </motion.div>
         )}
