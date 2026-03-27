@@ -6,13 +6,16 @@ import Layout from "@/components/layout/Layout";
 import { toast } from "sonner";
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowRight, Banknote, Lock } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const CheckoutPage = () => {
   const { items, totalPrice, clearCart } = useCartStore();
   const navigate = useNavigate();
-  const [paymentMethod] = useState<"cod">("cod");
+  const { user } = useAuth();
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [placing, setPlacing] = useState(false);
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
@@ -36,16 +39,20 @@ const CheckoutPage = () => {
     }
   };
 
-  const handleOrder = () => {
-    const { fullName, phone, pincode, address, city, state } = form;
-    if (!fullName || !phone || !pincode || !address || !city || !state) {
-      toast.error("Please fill in all address fields");
-      return;
-    }
-    toast.success("Order placed successfully! 🎉");
-    clearCart();
-    navigate("/orders");
-  };
+  // Redirect to login if not authenticated
+  if (!user) {
+    return (
+      <Layout>
+        <div className="container py-20 text-center">
+          <h2 className="text-2xl font-display font-bold mb-2">Please login to checkout</h2>
+          <p className="text-muted-foreground mb-4">You need to sign in before placing an order</p>
+          <Link to="/login" className="inline-flex items-center gap-2 gold-gradient-bg text-primary-foreground px-6 py-3 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">
+            Sign In <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </Layout>
+    );
+  }
 
   if (items.length === 0) {
     return (
@@ -59,6 +66,66 @@ const CheckoutPage = () => {
       </Layout>
     );
   }
+
+  const handleOrder = async () => {
+    const { fullName, phone, pincode, address, city, state } = form;
+    if (!fullName || !phone || !pincode || !address || !city || !state) {
+      toast.error("Please fill in all address fields");
+      return;
+    }
+
+    setPlacing(true);
+    const orderNumber = "SL" + Date.now().toString(36).toUpperCase();
+
+    // Insert order
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .insert({
+        user_id: user.id,
+        order_number: orderNumber,
+        payment_method: "cod",
+        subtotal,
+        delivery,
+        discount,
+        total,
+        full_name: fullName,
+        phone,
+        address,
+        city,
+        state,
+        pincode,
+      })
+      .select()
+      .single();
+
+    if (orderError || !order) {
+      toast.error("Failed to place order. Please try again.");
+      setPlacing(false);
+      return;
+    }
+
+    // Insert order items
+    const orderItems = items.map(({ product, quantity }) => ({
+      order_id: order.id,
+      product_id: product.id,
+      product_name: product.name,
+      product_image: product.image,
+      price: product.price,
+      quantity,
+    }));
+
+    const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
+
+    if (itemsError) {
+      toast.error("Order placed but items failed to save.");
+    } else {
+      toast.success("Order placed successfully! 🎉");
+    }
+
+    clearCart();
+    setPlacing(false);
+    navigate("/orders");
+  };
 
   return (
     <Layout>
@@ -171,9 +238,10 @@ const CheckoutPage = () => {
             <motion.button
               whileTap={{ scale: 0.98 }}
               onClick={handleOrder}
-              className="block w-full mt-6 gold-gradient-bg text-primary-foreground py-3.5 rounded-xl font-semibold text-sm text-center hover:opacity-90 transition-opacity"
+              disabled={placing}
+              className="block w-full mt-6 gold-gradient-bg text-primary-foreground py-3.5 rounded-xl font-semibold text-sm text-center hover:opacity-90 transition-opacity disabled:opacity-50"
             >
-              Place Order <ArrowRight className="w-4 h-4 inline ml-1" />
+              {placing ? "Placing Order..." : "Place Order"} <ArrowRight className="w-4 h-4 inline ml-1" />
             </motion.button>
           </div>
         </div>

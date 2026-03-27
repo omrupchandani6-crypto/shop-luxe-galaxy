@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 
 const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -11,10 +13,50 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  if (user) {
+    navigate("/");
+    return null;
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.info("Authentication requires backend setup. Enable Lovable Cloud to proceed!");
+    if (!email || !password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    setLoading(true);
+
+    if (isLogin) {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Welcome back! 🎉");
+        navigate("/");
+      }
+    } else {
+      if (!name) {
+        toast.error("Please enter your name");
+        setLoading(false);
+        return;
+      }
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: name } },
+      });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Account created! You're now logged in 🎉");
+        navigate("/");
+      }
+    }
+    setLoading(false);
   };
 
   return (
@@ -43,7 +85,7 @@ const LoginPage = () => {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="John Doe"
+                    placeholder="Your full name"
                     className="w-full bg-secondary rounded-lg px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-primary"
                   />
                 </div>
@@ -84,9 +126,11 @@ const LoginPage = () => {
 
               <button
                 type="submit"
-                className="w-full gold-gradient-bg text-primary-foreground py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                disabled={loading}
+                className="w-full gold-gradient-bg text-primary-foreground py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50"
               >
-                {isLogin ? "Sign In" : "Create Account"} <ArrowRight className="w-4 h-4" />
+                {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}{" "}
+                {!loading && <ArrowRight className="w-4 h-4" />}
               </button>
             </form>
 
