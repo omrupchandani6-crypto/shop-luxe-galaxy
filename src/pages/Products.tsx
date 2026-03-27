@@ -60,7 +60,7 @@ const ProductsPage = () => {
         <input
           type="range"
           min={0}
-          max={120000}
+          max={200000}
           step={1000}
           value={priceRange[1]}
           onChange={(e) => setPriceRange([0, Number(e.target.value)])}
