@@ -153,6 +153,22 @@ const Navbar = () => {
                   <Shield className="w-3.5 h-3.5" /> Admin Panel
                 </Link>
               )}
+              {user ? (
+                <button
+                  onClick={() => { setMobileOpen(false); handleSignOut(); }}
+                  className="text-sm font-medium py-2 text-destructive flex items-center gap-1"
+                >
+                  <LogOut className="w-3.5 h-3.5" /> Sign Out
+                </button>
+              ) : (
+                <Link
+                  to="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="text-sm font-medium py-2 text-primary flex items-center gap-1"
+                >
+                  <User className="w-3.5 h-3.5" /> Sign In
+                </Link>
+              )}
             </div>
           </motion.div>
         )}
