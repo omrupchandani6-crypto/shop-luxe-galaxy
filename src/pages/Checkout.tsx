@@ -173,10 +173,10 @@ const CheckoutPage = () => {
             <div className="glass-card rounded-xl p-6">
               <h3 className="font-display font-semibold mb-4">Payment Method</h3>
               <div className="space-y-3">
-                <div className="w-full flex items-center gap-3 p-4 rounded-xl border border-border opacity-50 cursor-not-allowed">
+                <div className="w-full flex items-center gap-3 p-4 rounded-xl border border-border opacity-50 cursor-not-allowed relative overflow-hidden">
                   <Lock className="w-5 h-5 text-muted-foreground" />
                   <span className="text-sm font-medium text-muted-foreground">Razorpay (UPI / Card / Net Banking)</span>
-                  <span className="ml-auto text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded-full">Unavailable</span>
+                  <span className="ml-auto text-xs gold-gradient-bg text-primary-foreground px-3 py-1 rounded-full font-semibold tracking-wide">Coming Soon</span>
                 </div>
                 <div className="w-full flex items-center gap-3 p-4 rounded-xl border border-primary bg-primary/5">
                   <Banknote className="w-5 h-5 text-primary" />
