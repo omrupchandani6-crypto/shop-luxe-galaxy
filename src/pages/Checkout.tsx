@@ -124,7 +124,7 @@ const CheckoutPage = () => {
 
     clearCart();
     setPlacing(false);
-    navigate("/orders");
+    navigate(`/order-confirmed?order=${orderNumber}`);
   };
 
   return (

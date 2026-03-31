@@ -12,6 +12,7 @@ import Checkout from "./pages/Checkout.tsx";
 import Orders from "./pages/Orders.tsx";
 import Login from "./pages/Login.tsx";
 import Admin from "./pages/Admin.tsx";
+import OrderConfirmed from "./pages/OrderConfirmed.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/orders" element={<Orders />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/order-confirmed" element={<OrderConfirmed />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
