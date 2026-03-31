@@ -96,6 +96,15 @@ const Navbar = () => {
           >
             <Search className="w-5 h-5" />
           </button>
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="p-2 rounded-full hover:bg-secondary transition-colors text-primary"
+              title="Admin Panel"
+            >
+              <Shield className="w-5 h-5" />
+            </Link>
+          )}
           <Link to="/cart" className="p-2 rounded-full hover:bg-secondary transition-colors relative">
             <ShoppingBag className="w-5 h-5" />
             {totalItems > 0 && (
