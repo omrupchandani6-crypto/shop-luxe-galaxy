@@ -100,7 +100,11 @@ const ProductsPage = () => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl md:text-3xl font-display font-bold">
-              All <span className="gold-gradient-text">Products</span>
+              {searchQuery ? (
+                <>Results for "<span className="gold-gradient-text">{searchQuery}</span>"</>
+              ) : (
+                <>All <span className="gold-gradient-text">Products</span></>
+              )}
             </h1>
             <p className="text-sm text-muted-foreground mt-1">{filtered.length} products found</p>
           </div>
