@@ -9,6 +9,7 @@ import Layout from "@/components/layout/Layout";
 const ProductsPage = () => {
   const [searchParams] = useSearchParams();
   const initialCategory = searchParams.get("category") || "";
+  const searchQuery = searchParams.get("search") || "";
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 200000]);
   const [minRating, setMinRating] = useState(0);
@@ -16,12 +17,19 @@ const ProductsPage = () => {
 
   const filtered = useMemo(() => {
     return products.filter((p) => {
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        const matchesSearch = p.name.toLowerCase().includes(q) ||
+          p.brand.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q);
+        if (!matchesSearch) return false;
+      }
       if (selectedCategory && p.category !== selectedCategory) return false;
       if (p.price < priceRange[0] || p.price > priceRange[1]) return false;
       if (p.rating < minRating) return false;
       return true;
     });
-  }, [selectedCategory, priceRange, minRating]);
+  }, [selectedCategory, priceRange, minRating, searchQuery]);
 
   const clearFilters = () => {
     setSelectedCategory("");
