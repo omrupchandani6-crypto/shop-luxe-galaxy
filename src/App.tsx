@@ -33,6 +33,7 @@ const App = () => (
             <Route path="/orders" element={<Orders />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/order-confirmed" element={<OrderConfirmed />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
