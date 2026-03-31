@@ -9,6 +9,7 @@ import Layout from "@/components/layout/Layout";
 const ProductsPage = () => {
   const [searchParams] = useSearchParams();
   const initialCategory = searchParams.get("category") || "";
+  const searchQuery = searchParams.get("search") || "";
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 200000]);
   const [minRating, setMinRating] = useState(0);
@@ -16,12 +17,19 @@ const ProductsPage = () => {
 
   const filtered = useMemo(() => {
     return products.filter((p) => {
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        const matchesSearch = p.name.toLowerCase().includes(q) ||
+          p.brand.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q);
+        if (!matchesSearch) return false;
+      }
       if (selectedCategory && p.category !== selectedCategory) return false;
       if (p.price < priceRange[0] || p.price > priceRange[1]) return false;
       if (p.rating < minRating) return false;
       return true;
     });
-  }, [selectedCategory, priceRange, minRating]);
+  }, [selectedCategory, priceRange, minRating, searchQuery]);
 
   const clearFilters = () => {
     setSelectedCategory("");
@@ -92,7 +100,11 @@ const ProductsPage = () => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl md:text-3xl font-display font-bold">
-              All <span className="gold-gradient-text">Products</span>
+              {searchQuery ? (
+                <>Results for "<span className="gold-gradient-text">{searchQuery}</span>"</>
+              ) : (
+                <>All <span className="gold-gradient-text">Products</span></>
+              )}
             </h1>
             <p className="text-sm text-muted-foreground mt-1">{filtered.length} products found</p>
           </div>
